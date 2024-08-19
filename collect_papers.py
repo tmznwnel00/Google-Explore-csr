@@ -34,7 +34,7 @@ for name, link in author_dict.items():
 
 sch = SemanticScholar()
 
-def upload_paper(p):
+def upload_paper(p, origin_id=None, edge_type=None):
     if "fieldsOfStudy" in p:
         pass
     elif "citedPaper" in p:
@@ -43,24 +43,56 @@ def upload_paper(p):
         p = p["citingPaper"]
 
     fieldsOfStudy = p["fieldsOfStudy"]
-    if fieldsOfStudy and "Computer Science" in fieldsOfStudy:
+    if fieldsOfStudy and "Computer Science" in fieldsOfStudy and p["abstract"]:
         data = {
             "paperId": p["paperId"],
             "title": p["title"],
             "year": p["year"],
             "authors": p["authors"],
-            "abstract": p["abstract"]
+            "abstract": p["abstract"],
+            "reference_list": [],
+            "citation_list": []
         }
         ref = db.reference(f"papers/{data['paperId']}")
 
         if ref.get() is None:
             ref.set(data)
             print(data["title"]) 
+        
+        if origin_id:
+            if edge_type == 'r':
+                add_edge(origin_id, p["paperId"])
+            elif edge_type == 'c':
+                add_edge(p["paperId"], origin_id)
+
+
+def add_edge(p1, p2):
+    ref1 = db.reference(f"papers/{p1}")
+    paper1 = ref1.get()
+
+    ref2 = db.reference(f"papers/{p2}")
+    paper2 = ref2.get()
+
+    if not paper2:
+        pass
+    else:
+        if "reference_list" in paper1 and p2 in paper1["reference_list"]:
+            pass
+        else:
+            paper1.setdefault("reference_list", []).append(p2)
+            paper2.setdefault("citation_list", []).append(p1)
+            ref1.set(paper1)
+            ref2.set(paper2)
+            print("add edge", paper1["title"], paper2["title"])
+            
+            
 
 results = sch.get_authors(author_id_list)
 for result in results:
     print(result.name)
     for paper in result["papers"]:
+        if paper["abstract"] is None:
+            continue
         if paper["fieldsOfStudy"] and "Computer Science" in paper["fieldsOfStudy"]:
             if db.reference(f"papers/{paper["paperId"]}").get():
                 continue
@@ -70,6 +102,6 @@ for result in results:
             citations = sch.get_paper_citations(paper["paperId"])
 
             for reference in references:
-                upload_paper(dict(reference))
+                upload_paper(dict(reference), paper["paperId"], 'r')
             for citation in citations:
-                upload_paper(dict(citation))
+                upload_paper(dict(citation), paper["paperId"], 'c')
