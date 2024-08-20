@@ -4,15 +4,20 @@ from ppnp.pytorch import PPNP
 from ppnp.pytorch.training import train_model
 from ppnp.pytorch.earlystopping import stopping_args
 from ppnp.pytorch.propagation import PPRExact, PPRPowerIteration
-from ppnp.data.io import load_dataset
+# from ppnp.data.io import load_dataset
+from ppnp.data.io import networkx_to_sparsegraph
+from graph import G
 
 logging.basicConfig(
         format='%(asctime)s: %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S',
         level=logging.INFO)
 
-graph_name = 'cora_ml'
-graph = load_dataset(graph_name)
+# graph_name = 'cora_ml'
+# graph = load_dataset(graph_name)
+graph_name = "snu_ds"
+graph = networkx_to_sparsegraph(G, label_name="label")
+print("finished sparsegraph")
 graph.standardize(select_lcc=True)
 
 prop_ppnp = PPRExact(graph.adj_matrix, alpha=0.1)
@@ -27,7 +32,7 @@ idx_split_args = {'ntrain_per_class': 20, 'nstopping': 500, 'nknown': 1500, 'see
 reg_lambda = 5e-3
 learning_rate = 0.01
 
-test = False
+test = True
 device = 'cpu'
 print_interval = 20
 

@@ -34,7 +34,13 @@ class PPNP(nn.Module):
         res = self.fcs[-1](self.dropout(layer_inner))
         return res
 
+    def get_embeddings(self, attr_matrix: torch.sparse.FloatTensor) -> torch.Tensor:
+        embeddings = self._transform_features(attr_matrix)
+        return embeddings
+    
     def forward(self, attr_matrix: torch.sparse.FloatTensor, idx: torch.LongTensor):
         local_logits = self._transform_features(attr_matrix)
         final_logits = self.propagation(local_logits, idx)
         return F.log_softmax(final_logits, dim=-1)
+    
+    

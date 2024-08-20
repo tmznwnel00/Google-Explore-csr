@@ -98,7 +98,8 @@ def networkx_to_sparsegraph(
 
     # Extract adjacency matrix
     adj_matrix = nx.adjacency_matrix(nx_graph)
-
+    adj_matrix = sp.csr_matrix(adj_matrix)
+    
     # Collect all node attribute names
     attrs = set()
     for _, node_data in nx_graph.nodes().data():

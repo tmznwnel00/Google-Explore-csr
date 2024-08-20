@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import TensorDataset, DataLoader
+import numpy as np
 
 from ..data.sparsegraph import SparseGraph
 from ..preprocessing import gen_seeds, gen_splits, normalize_attributes
@@ -117,6 +118,13 @@ def train_model(
 
     # Load best model weights
     model.load_state_dict(early_stopping.best_state)
+
+    model.eval()  # Ensure the model is in evaluation mode
+    with torch.no_grad():
+        final_embeddings = model.get_embeddings(attr_mat_norm)
+    
+    # Optionally, save or return embeddings
+    np.save('final_embeddings.npy', final_embeddings.cpu().numpy())
 
     train_preds = get_predictions(model, attr_mat_norm, idx_all['train'])
     train_acc = (train_preds == labels_all[idx_all['train']]).mean()

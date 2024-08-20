@@ -31,11 +31,11 @@ def train_stopping_split(
     train_idx_split = []
     for i in range(max(labels) + 1):
         train_idx_split.append(rnd_state.choice(
-                idx[labels == i], ntrain_per_class, replace=False))
+                idx[labels == i], ntrain_per_class, replace=True))
     train_idx = np.concatenate(train_idx_split)
     stopping_idx = rnd_state.choice(
             exclude_idx(idx, [train_idx]),
-            nstopping, replace=False)
+            nstopping, replace=True)
     return train_idx, stopping_idx
 
 
