@@ -9,3 +9,5 @@ dgl==2.1.0
 nltk==3.9.1
 mxnet==1.6.0
 scikit-learn==1.5.1
+faiss-cpu==1.8.0
+flask==3.0.3

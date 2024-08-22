@@ -122,9 +122,14 @@ def train_model(
     model.eval()  # Ensure the model is in evaluation mode
     with torch.no_grad():
         final_embeddings = model.get_embeddings(attr_mat_norm)
+
+    node_ids = graph.node_names
+    node_ids = np.array(node_ids)
     
+    combined_array = np.hstack((node_ids.reshape(-1, 1), final_embeddings.cpu().numpy()))
+
     # Optionally, save or return embeddings
-    np.save('final_embeddings.npy', final_embeddings.cpu().numpy())
+    np.save('final_embeddings.npy', combined_array)
 
     train_preds = get_predictions(model, attr_mat_norm, idx_all['train'])
     train_acc = (train_preds == labels_all[idx_all['train']]).mean()

@@ -1,0 +1,105 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Search</title>
+    <style>
+        /* Simple styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .search-container {
+            margin-bottom: 20px;
+        }
+        #query {
+            width: 500px;
+            padding: 15px;
+            font-size: 16px;
+        }
+        .paper-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .paper-details {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+    <script>
+        async function performSearch() {
+            const query = document.getElementById('query').value;
+            const searchType = document.getElementById('searchType').value;
+    
+            try {
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: query }),
+                });
+    
+                if (!response.ok) throw new Error('Network response was not ok.');
+    
+                const results = await response.json();
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '';
+    
+                results.forEach(paper => {
+                    const paperDiv = document.createElement('div');
+                    paperDiv.className = 'paper-box';
+                    paperDiv.innerHTML = `
+                        <strong>${paper.title}</strong><br>
+                        Authors: ${paper.authors.map(author => author.name).join(', ')}<br>
+                        Year: ${paper.year}
+                    `;
+                    paperDiv.onclick = () => viewPaperDetail(paper.paperId);
+                    resultsDiv.appendChild(paperDiv);
+                });
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            }
+        }
+    
+        async function viewPaperDetail(paperId) {
+            const response = await fetch(`/paper?paperId=${paperId}`);
+            const paper = await response.json();
+            
+            const detailsDiv = document.getElementById('details');
+            detailsDiv.innerHTML = `
+                <h2>${paper.title}</h2>
+                <p><strong>Authors:</strong> ${paper.authors.map(author => author.name).join(', ')}</p>
+                <p><strong>Year:</strong> ${paper.year}</p>
+                <p><strong>Abstract:</strong> ${paper.abstract}</p>
+            `;
+        }
+</script>
+    
+    
+</head>
+<body>
+    <h1>Search for Papers</h1>
+    <div class="search-container">
+        <select id="searchType">
+            <option value="text">Text</option>
+            <option value="title">Title</option>
+            <option value="author">Author</option>
+            <option value="year">Year</option>
+        </select>
+        <input type="text" id="query" placeholder="Enter your query">
+        <button onclick="performSearch()">Search</button>
+    </div>
+    <div id="details"></div>
+    <div id="results"></div>
+</body>
+</html>

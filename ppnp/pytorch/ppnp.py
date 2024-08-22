@@ -35,7 +35,9 @@ class PPNP(nn.Module):
         return res
 
     def get_embeddings(self, attr_matrix: torch.sparse.FloatTensor) -> torch.Tensor:
-        embeddings = self._transform_features(attr_matrix)
+        self.eval()  # Ensure the model is in evaluation mode
+        with torch.no_grad():
+            embeddings = self._transform_features(attr_matrix)
         return embeddings
     
     def forward(self, attr_matrix: torch.sparse.FloatTensor, idx: torch.LongTensor):
