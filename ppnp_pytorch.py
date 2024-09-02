@@ -13,12 +13,11 @@ logging.basicConfig(
         datefmt='%Y-%m-%d %H:%M:%S',
         level=logging.INFO)
 
-# graph_name = 'cora_ml'
-# graph = load_dataset(graph_name)
 graph_name = "snu_ds"
 graph = networkx_to_sparsegraph(G, label_name="label")
 print("finished sparsegraph")
 graph.standardize(select_lcc=True)
+print(graph)
 
 prop_ppnp = PPRExact(graph.adj_matrix, alpha=0.1)
 prop_appnp = PPRPowerIteration(graph.adj_matrix, alpha=0.1, niter=10)
