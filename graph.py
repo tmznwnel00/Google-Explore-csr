@@ -48,10 +48,9 @@ for paper_id, paper_data in papers.items():
     
     G.add_node(paper_id, **node_attributes)
 
-# Step 5: Add edges based on citations
 for paper_id, paper_data in papers.items():
     for cited_paper_id in paper_data.get('citation_list', []):
-        if cited_paper_id in papers:  # Ensure the cited paper is in the database
+        if cited_paper_id in papers:  
             G.add_edge(paper_id, cited_paper_id)
 
 print("finished networkX")

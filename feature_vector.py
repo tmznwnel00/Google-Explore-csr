@@ -29,11 +29,11 @@ for paper_id, abstract in paper_data.items():
     processed_words = []
     
     for word in words:
-        word = word.lower()  # Convert to lowercase
-        word = stemmer.stem(word)  # Apply stemming
-        if word not in stop_words and word.isalpha():  # Remove stopwords and non-alphabetic tokens
+        word = word.lower() 
+        word = stemmer.stem(word)
+        if word not in stop_words and word.isalpha():  
             processed_words.append(word)
-            word_freq[word] += 1  # Count word frequency
+            word_freq[word] += 1 
     
     processed_abstracts[paper_id] = processed_words
 

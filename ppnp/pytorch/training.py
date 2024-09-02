@@ -119,7 +119,7 @@ def train_model(
     # Load best model weights
     model.load_state_dict(early_stopping.best_state)
 
-    model.eval()  # Ensure the model is in evaluation mode
+    model.eval() 
     with torch.no_grad():
         final_embeddings = model.get_embeddings(attr_mat_norm)
 
@@ -128,7 +128,6 @@ def train_model(
     
     combined_array = np.hstack((node_ids.reshape(-1, 1), final_embeddings.cpu().numpy()))
 
-    # Optionally, save or return embeddings
     np.save('final_embeddings.npy', combined_array)
 
     train_preds = get_predictions(model, attr_mat_norm, idx_all['train'])

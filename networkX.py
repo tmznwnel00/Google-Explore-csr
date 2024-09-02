@@ -23,10 +23,12 @@ for paper_id, paper_data in papers.items():
         G.add_edge(paper_id, ref_id)  # A -> B
 
 plt.figure(figsize=(30, 30))  
+
+import community as community_louvain
+partition = community_louvain.best_partition(G)
 pos = nx.spring_layout(G, k=0.1)
 nx.draw(G, pos, node_size=10, node_color="skyblue", with_labels=False, edge_color="black", alpha=0.7)
 
-# plt.title("Citation and Reference Network")
 plt.savefig("citation_reference_network.png")
 
 plt.close()
