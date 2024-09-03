@@ -2,6 +2,9 @@
 
 This project is a search engine built using the APPNP model and a custom citation network based on SNU Data Science papers.
 
+<img width="612" alt="image" src="https://github.com/user-attachments/assets/a9bec11d-ea59-4b31-8911-9f801fc30f96">
+
+
 ## Installation
 
 1. **Install Required Packages**
